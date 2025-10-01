@@ -25,6 +25,11 @@ app.listen(port, "0.0.0.0", () => {
   console.log("listening on port", port);
 });
 
+app.get("/", (req, res) => {
+  res.send("GoodNightHub API is running 🚀");
+});
+
+
 // ====== Routes ======
 
 // Register
