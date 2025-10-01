@@ -1,5 +1,5 @@
 const express = require("express");
-const mysql = require("mysql2");   // แนะนำใช้ mysql2 จะเสถียรกว่า mysql
+const mysql = require("mysql2");   // ใช้ mysql2 เสถียรกว่า mysql
 const cors = require("cors");
 
 const app = express();
@@ -8,23 +8,24 @@ app.use(express.json());
 
 // ====== DB Config from ENV ======
 const db = mysql.createPool({
-  host: process.env.DB_HOST || "containers-us-west-123.railway.app",
-  port: process.env.DB_PORT || 6543,
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "your_password",
-  database: process.env.DB_NAME || "railway",
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  ssl: { rejectUnauthorized: true } // Railway ต้องใช้ SSL
+  ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : undefined
 });
 
 // ====== Start Server ======
 const port = process.env.PORT || 3002;
 app.listen(port, "0.0.0.0", () => {
-  console.log("listening on port", port);
+  console.log("✅ GoodNightHub API listening on port", port);
 });
 
+// ====== Health Check ======
 app.get("/", (req, res) => {
   res.send("GoodNightHub API is running 🚀");
 });
@@ -138,7 +139,7 @@ app.post("/sleepdiaryform", (req, res) => {
   db.query(
     sql,
     [
-      1, // TODO: แก้ทีหลังให้ใช้ user_id จาก token/login
+      1, // TODO: ใช้ user_id จาก token/login ทีหลัง
       sleep_date,
       bedtime,
       sleep_latency,
